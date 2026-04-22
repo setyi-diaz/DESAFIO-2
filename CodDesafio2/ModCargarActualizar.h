@@ -3,7 +3,7 @@
 
 #include "equipo.h"
 
-void cargarEstadisticasSelecciones(Equipo (& )[3] );
-void actualizarEstadisticasSelecciones(Equipo (& )[3] );
+Equipo* cargarEstadisticasSelecciones(unsigned int&);
+void actualizarEstadisticasSelecciones(Equipo* (& ), unsigned int&);
 
 #endif // MODCARGARACTUALIZAR_H

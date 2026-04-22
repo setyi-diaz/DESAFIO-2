@@ -6,14 +6,12 @@
 #include <sstream>
 using namespace std;
 
-void cargarEstadisticasSelecciones(Equipo (&selecciones)[3]) {
-    ifstream archivoSelecciones("prueba.txt", ios::in);
+Equipo* cargarEstadisticasSelecciones(unsigned int& contRef) {
+    ifstream archivoSelecciones("prueba.csv", ios::in);
     if (!archivoSelecciones.is_open())
         throw std::runtime_error("No se pudo abrir el archivo");
 
     string lineaDescarte;
-
-    // Saltar línea 1 (título) y línea 2 (cabecera)
     getline(archivoSelecciones, lineaDescarte);
     getline(archivoSelecciones, lineaDescarte);
 
@@ -31,34 +29,46 @@ void cargarEstadisticasSelecciones(Equipo (&selecciones)[3]) {
     string linea, temp;
     linea.reserve(120);
     stringstream ss;
-    size_t len;
 
-    for (short i = 0; i < 3; i++) {
+    while(getline(archivoSelecciones,linea))
+        contRef++;
+
+    archivoSelecciones.clear();
+    archivoSelecciones.seekg(0, ios::beg);
+
+    getline(archivoSelecciones, lineaDescarte);
+    getline(archivoSelecciones, lineaDescarte);
+
+    Equipo* selecciones = new Equipo [contRef];
+    for (unsigned int i = 0; i < contRef; i++) {
         if (!getline(archivoSelecciones, linea)){
-            cout<<"error en la lectura de una linea del archivo"<<endl;
+            cout<<"error en la lectura de una linea: "<<i<<endl;
+            delete [] selecciones;
+            selecciones = nullptr;
             break;
         }
-
         ss.str(linea);
         ss.clear();
 
         getline(ss, temp, ';');
         ranking = (unsigned short)stoi(temp);
-        // Leer campos de texto separados por ';'
 
-        getline(ss, temp, ';'); len = temp.length();
-        memcpy(pais, temp.c_str(), len + 1);
+        getline(ss, temp, ';');
+        strncpy(pais, temp.c_str(), sizeof(pais) - 1);
+        pais[sizeof(pais) - 1] = '\0';
 
-        getline(ss, temp, ';'); len = temp.length();
-        memcpy(dt, temp.c_str(), len + 1);
+        getline(ss, temp, ';');
+        strncpy(dt, temp.c_str(), sizeof(dt) - 1);
+        dt[sizeof(dt) - 1] = '\0';
 
-        getline(ss, temp, ';'); len = temp.length();
-        memcpy(federacion, temp.c_str(), len + 1);
+        getline(ss, temp, ';');
+        strncpy(federacion, temp.c_str(), sizeof(federacion) - 1);
+        federacion[sizeof(federacion) - 1] = '\0';
 
-        getline(ss, temp, ';'); len = temp.length();
-        memcpy(confederacion, temp.c_str(), len + 1);
+        getline(ss, temp, ';');
+        strncpy(confederacion, temp.c_str(), sizeof(confederacion) - 1);
+        confederacion[sizeof(confederacion) - 1] = '\0';
 
-        // Leer campos numéricos separados por ';'
         getline(ss, temp, ';');
         golesAFavor = (unsigned short)stoi(temp);
         getline(ss, temp, ';');
@@ -70,14 +80,16 @@ void cargarEstadisticasSelecciones(Equipo (&selecciones)[3]) {
         getline(ss, temp);
         partidosPerdidos = (unsigned short)stoi(temp);
 
-        // Crear y asignar al arreglo cada equipo
         selecciones[i] = Equipo(ranking, pais, dt, federacion, confederacion,
                                 golesAFavor, golesEnContra, partidosGanados,
                                 partidosEmpatados, partidosPerdidos);
+        cout << "dir = " << &selecciones[i] << endl;
+        cout << "contador i ="<<i<<endl;
     }
+    return selecciones;
 }
-void actualizarEstadisticasSelecciones(Equipo (&selecciones)[3]){
-    ofstream archivoSelecciones("prueba.txt", ios::out | ios::trunc);
+void actualizarEstadisticasSelecciones(Equipo* (&selecciones), unsigned int& contRef){
+    ofstream archivoSelecciones("prueba.csv", ios::out | ios::trunc);
     if (!archivoSelecciones.is_open())
         throw std::runtime_error("No se pudo abrir el archivo para escritura");
 
@@ -87,11 +99,14 @@ void actualizarEstadisticasSelecciones(Equipo (&selecciones)[3]){
                           "Federación de fútbol;Confederación;Goles a favor;"
                           "Goles en contra;Partidos ganados;Partidos empatados;"
                           "Partidos perdidos\n";
-    for (short i = 0; i < 3; i++) {
-
+    for (unsigned int i = 0; i < contRef; i++) {
+        if (selecciones == nullptr) {
+            cout << "selecciones es nullptr\n";
+        }
         //temp es una referncia a un Equipo
         const Equipo& temp = selecciones[i];
 
+        cout<<temp.getRanking()<<endl;
         archivoSelecciones
             << temp.getRanking()          << ';'
             << (string)temp.getPais()             << ';'
@@ -103,5 +118,7 @@ void actualizarEstadisticasSelecciones(Equipo (&selecciones)[3]){
             << temp.getPartidosGanados()  << ';'
             << temp.getPartidosEmpatados()<< ';'
             << temp.getPartidosPerdidos() << '\n';
+        cout<<"iteraciones: "<<i<<endl;
     }
+    cout<<"paso por aqui"<<endl;
 }
