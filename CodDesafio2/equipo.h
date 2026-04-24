@@ -2,6 +2,7 @@
 #define EQUIPO_H
 #include <string>
 #include <cstring>
+#include "jugador.h"
 using std::string;
 
 class Equipo

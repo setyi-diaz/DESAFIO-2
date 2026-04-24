@@ -6,7 +6,7 @@
 #include <sstream>
 using namespace std;
 
-Equipo* cargarEstadisticasSelecciones(unsigned int& contRef) {
+Equipo* cargarEstadisticasSelecciones(unsigned short& contRef, unsigned short& refIndAnf) {
     ifstream archivoSelecciones("prueba.csv", ios::in);
     if (!archivoSelecciones.is_open())
         throw std::runtime_error("No se pudo abrir el archivo");
@@ -40,7 +40,7 @@ Equipo* cargarEstadisticasSelecciones(unsigned int& contRef) {
     getline(archivoSelecciones, lineaDescarte);
 
     Equipo* selecciones = new Equipo [contRef];
-    for (unsigned int i = 0; i < contRef; i++) {
+    for (unsigned short i = 0; i < contRef; i++) {
         if (!getline(archivoSelecciones, linea)){
             cout<<"error en la lectura de una linea: "<<i<<endl;
             delete [] selecciones;
@@ -83,12 +83,11 @@ Equipo* cargarEstadisticasSelecciones(unsigned int& contRef) {
         selecciones[i] = Equipo(ranking, pais, dt, federacion, confederacion,
                                 golesAFavor, golesEnContra, partidosGanados,
                                 partidosEmpatados, partidosPerdidos);
-        cout << "dir = " << &selecciones[i] << endl;
-        cout << "contador i ="<<i<<endl;
+        if((string)pais == "United States") refIndAnf = i;
     }
     return selecciones;
 }
-void actualizarEstadisticasSelecciones(Equipo* (&selecciones), unsigned int& contRef){
+void actualizarEstadisticasSelecciones(Equipo* selecciones, unsigned short& contRef){
     ofstream archivoSelecciones("prueba.csv", ios::out | ios::trunc);
     if (!archivoSelecciones.is_open())
         throw std::runtime_error("No se pudo abrir el archivo para escritura");
@@ -99,11 +98,11 @@ void actualizarEstadisticasSelecciones(Equipo* (&selecciones), unsigned int& con
                           "Federación de fútbol;Confederación;Goles a favor;"
                           "Goles en contra;Partidos ganados;Partidos empatados;"
                           "Partidos perdidos\n";
-    for (unsigned int i = 0; i < contRef; i++) {
+    for (unsigned short i = 0; i < contRef; i++) {
         if (selecciones == nullptr) {
             cout << "selecciones es nullptr\n";
         }
-        //temp es una referncia a un Equipo
+        //temp es una referencia a un Equipo
         const Equipo& temp = selecciones[i];
 
         cout<<temp.getRanking()<<endl;
@@ -118,7 +117,5 @@ void actualizarEstadisticasSelecciones(Equipo* (&selecciones), unsigned int& con
             << temp.getPartidosGanados()  << ';'
             << temp.getPartidosEmpatados()<< ';'
             << temp.getPartidosPerdidos() << '\n';
-        cout<<"iteraciones: "<<i<<endl;
     }
-    cout<<"paso por aqui"<<endl;
 }
