@@ -105,7 +105,6 @@ void actualizarEstadisticasSelecciones(Equipo* selecciones, unsigned short& cont
         //temp es una referencia a un Equipo
         const Equipo& temp = selecciones[i];
 
-        cout<<temp.getRanking()<<endl;
         archivoSelecciones
             << temp.getRanking()          << ';'
             << (string)temp.getPais()             << ';'

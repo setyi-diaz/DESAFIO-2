@@ -32,7 +32,6 @@ void Eliminatoria::conformarGrupos(Equipo* ptrSelecciones, short int* ptrBombos)
             ptrBombos[j + despl] = temp;
         }
     }
-
     for (short int i = 0; i < 12; i++) {
         grupos[i][0] = &ptrSelecciones[ptrBombos[i]];
     }
@@ -65,11 +64,18 @@ void Eliminatoria::conformarGrupos(Equipo* ptrSelecciones, short int* ptrBombos)
         if (!bomboValido) {
             std::cout << "ERROR: no se encontró permutación válida para bombo "
                       << k << " tras 1000 intentos\n";
-            return;
+            break;
         }
 
         for (short int i = 0; i < 12; i++) {
             grupos[i][k] = &ptrSelecciones[ptrBombos[i + despl]];
+        }
+    }
+    for(short int s = 0; s<12; s++){
+        if((string)((*grupos[s][1]).getPais()) == "United States"){
+            Equipo** temp = grupos[0];
+            grupos[0] = grupos[s];
+            grupos[s] = temp;
         }
     }
 }

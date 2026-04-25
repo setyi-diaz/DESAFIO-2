@@ -12,7 +12,7 @@ private:
     bool validarConfederacion(Equipo* ptrSelecciones, short int* ptrBombos,short int grupo, short int bombo);
 
 public:
-    Eliminatoria(Equipo* refSelecciones);
+    Eliminatoria(Equipo* refSelecciones );
     ~Eliminatoria();
     void imprimirGruposConformados();
 };

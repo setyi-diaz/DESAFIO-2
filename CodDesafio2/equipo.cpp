@@ -1,7 +1,4 @@
 #include "equipo.h"
-#include <cstring>
-using std::strlen;
-using std::strncpy;
 
 Equipo::Equipo(unsigned short r, const  char* const p, const char* const d, const char* const f, const char* const c, unsigned short gf,
                unsigned short gc, unsigned short pg, unsigned short pe, unsigned short pp) {
@@ -33,7 +30,7 @@ Equipo::Equipo(unsigned short r, const  char* const p, const char* const d, cons
     partidosEmpatados = pe;
     partidosPerdidos = pp;
 }
-const Equipo &Equipo::operator=(const Equipo &derecha){
+const Equipo& Equipo::operator=(const Equipo &derecha){
     if (&derecha != this){
         ranking = derecha.getRanking();
         strncpy(pais, derecha.getPais(), sizeof(pais) - 1);
@@ -51,6 +48,26 @@ const Equipo &Equipo::operator=(const Equipo &derecha){
         partidosPerdidos = derecha.getPartidosPerdidos();
     }
     return *this;
+}
+void Equipo::elegirTitulares(){
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    Jugador* temp;
+
+    for (short int i = 27; i > 0; i--) {
+        std::uniform_int_distribution<unsigned int> dist(0, i);
+        unsigned int j = dist(gen);
+        temp = convocados[i];
+        convocados[i] = convocados[j];
+        convocados[j] = temp;
+    }
+}
+Jugador* Equipo::getConvocado(unsigned int i) {
+    return convocados[i];
+}
+
+const Jugador* Equipo::getConvocado(unsigned int  i) const {
+    return convocados[i];
 }
 
 const char* Equipo::getPais() const{
