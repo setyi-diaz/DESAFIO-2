@@ -4,6 +4,8 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += \
+        ModContadorRecursos.cpp \
+        fecha.cpp \
         fixture.cpp \
         ModCargarActualizar.cpp \
         eliminatoria.cpp \
@@ -13,6 +15,8 @@ SOURCES += \
         partido.cpp
 
 HEADERS += \
+    ModContadorRecursos.h \
+    fecha.h \
     fixture.h \
     ModCargarActualizar.h \
     eliminatoria.h \

@@ -1,4 +1,4 @@
-#include "Fixture.h"
+#include "fixture.h"
 #include <cstring>
 
 using std::strcmp;
@@ -8,158 +8,186 @@ Fixture::Fixture() {
     cantidadActual = 0;
     ganadoresRegistrados = 0;
 
-    perdedoresSemifinal[0] = 0;
-    perdedoresSemifinal[1] = 0;
-    cantidadPerdedoresSemifinal = 0;
-}
-
-Fixture::Fixture(Equipo** equipos, int cantidad) {
-    faseFixture = equipos;
-    cantidadActual = cantidad;
-    ganadoresRegistrados = 0;
+    for (int i = 0; i < 32; i++) {
+        arregloFixtureInterno[i] = 0;
+    }
 
     perdedoresSemifinal[0] = 0;
     perdedoresSemifinal[1] = 0;
     cantidadPerdedoresSemifinal = 0;
 }
 
-void Fixture::recibirEquiposFase(Equipo** equipos, int cantidad) {
-    faseFixture = equipos;
-    cantidadActual = cantidad;
-    ganadoresRegistrados = 0;
-
-    perdedoresSemifinal[0] = 0;
-    perdedoresSemifinal[1] = 0;
-    cantidadPerdedoresSemifinal = 0;
+bool Fixture::filaValida(short int fila) const {
+    return fila >= 0 && fila < 12;
 }
 
-bool Fixture::organizarR16() {
-    if (faseFixture == 0 || cantidadActual != 32) {
+bool Fixture::validarFilasSinRepetir(const short int filas[], int cantidad) const {
+    if (filas == 0) {
         return false;
     }
 
-    // Copia temporal del arreglo de punteros.
-    // referencia[0..11]  -> 12 primeros
-    // referencia[12..23] -> 12 segundos
-    // referencia[24..31] -> 8 mejores terceros
-    Equipo* referencia[32];
+    for (int i = 0; i < cantidad; i++) {
+        if (!filaValida(filas[i])) {
+            return false;
+        }
+
+        for (int j = i + 1; j < cantidad; j++) {
+            if (filas[i] == filas[j]) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+bool Fixture::organizarR16DesdeGrupos(
+    Equipo* grupos[12][4],
+    const short int mejoresTerceros[8],
+    const short int peoresSegundos[4]
+    ) {
+    if (grupos == 0 || mejoresTerceros == 0 || peoresSegundos == 0) {
+        return false;
+    }
+
+    if (!validarFilasSinRepetir(mejoresTerceros, 8)) {
+        return false;
+    }
+
+    if (!validarFilasSinRepetir(peoresSegundos, 4)) {
+        return false;
+    }
+
+    bool primeroUsado[12];
+    bool segundoUsado[12];
+    bool esPeorSegundo[12];
+
+    for (int i = 0; i < 12; i++) {
+        primeroUsado[i] = false;
+        segundoUsado[i] = false;
+        esPeorSegundo[i] = false;
+    }
+
+    for (int i = 0; i < 4; i++) {
+        esPeorSegundo[peoresSegundos[i]] = true;
+    }
+
     for (int i = 0; i < 32; i++) {
-        referencia[i] = faseFixture[i];
+        arregloFixtureInterno[i] = 0;
     }
 
     int libre = 0;
 
-    // 1) Ocho partidos: primero vs tercero
-    for (int partido = 0; partido < 8; partido++) {
-        int idxPrimero = -1;
-        for (int i = 0; i <= 11; i++) {
-            if (referencia[i] != 0) {
-                idxPrimero = i;
+    // 1) Ocho partidos: cabeza de grupo vs tercer puesto clasificado.
+    for (int i = 0; i < 8; i++) {
+        short int filaTercero = mejoresTerceros[i];
+
+        if (!filaValida(filaTercero) || grupos[filaTercero][2] == 0) {
+            return false;
+        }
+
+        short int filaPrimeroElegido = -1;
+
+        for (short int filaPrimero = 0; filaPrimero < 12; filaPrimero++) {
+            if (!primeroUsado[filaPrimero] &&
+                filaPrimero != filaTercero &&
+                grupos[filaPrimero][0] != 0) {
+                filaPrimeroElegido = filaPrimero;
                 break;
             }
         }
 
-        if (idxPrimero == -1) {
+        if (filaPrimeroElegido == -1) {
             return false;
         }
 
-        Equipo* primero = referencia[idxPrimero];
+        arregloFixtureInterno[libre] = grupos[filaPrimeroElegido][0];
+        arregloFixtureInterno[libre + 1] = grupos[filaTercero][2];
 
-        int idxTercero = -1;
-        for (int i = 24; i <= 31; i++) {
-            if (referencia[i] != 0 && referencia[i]->getGrupo() != primero->getGrupo()) {
-                idxTercero = i;
-                break;
-            }
-        }
-
-        if (idxTercero == -1) {
-            return false;
-        }
-
-        faseFixture[libre] = primero;
-        faseFixture[libre + 1] = referencia[idxTercero];
-
-        referencia[idxPrimero] = 0;
-        referencia[idxTercero] = 0;
-
+        primeroUsado[filaPrimeroElegido] = true;
         libre += 2;
     }
 
-    // 2) Cuatro partidos: primero vs peor segundo
-    // Los cuatro peores segundos vienen en 20..23
-    for (int partido = 0; partido < 4; partido++) {
-        int idxPrimero = -1;
-        for (int i = 0; i <= 11; i++) {
-            if (referencia[i] != 0) {
-                idxPrimero = i;
+    // 2) Cuatro partidos: cabezas de grupo restantes vs 4 peores segundos.
+    for (int i = 0; i < 4; i++) {
+        short int filaSegundo = peoresSegundos[i];
+
+        if (!filaValida(filaSegundo) || grupos[filaSegundo][1] == 0) {
+            return false;
+        }
+
+        short int filaPrimeroElegido = -1;
+
+        for (short int filaPrimero = 0; filaPrimero < 12; filaPrimero++) {
+            if (!primeroUsado[filaPrimero] &&
+                filaPrimero != filaSegundo &&
+                grupos[filaPrimero][0] != 0) {
+                filaPrimeroElegido = filaPrimero;
                 break;
             }
         }
 
-        if (idxPrimero == -1) {
+        if (filaPrimeroElegido == -1) {
             return false;
         }
 
-        Equipo* primero = referencia[idxPrimero];
+        arregloFixtureInterno[libre] = grupos[filaPrimeroElegido][0];
+        arregloFixtureInterno[libre + 1] = grupos[filaSegundo][1];
 
-        int idxSegundo = -1;
-        for (int i = 20; i <= 23; i++) {
-            if (referencia[i] != 0 && referencia[i]->getGrupo() != primero->getGrupo()) {
-                idxSegundo = i;
-                break;
-            }
-        }
-
-        if (idxSegundo == -1) {
-            return false;
-        }
-
-        faseFixture[libre] = primero;
-        faseFixture[libre + 1] = referencia[idxSegundo];
-
-        referencia[idxPrimero] = 0;
-        referencia[idxSegundo] = 0;
-
+        primeroUsado[filaPrimeroElegido] = true;
         libre += 2;
     }
 
-    // 3) Cuatro partidos: segundo vs segundo
+    // 3) Los segundos restantes se enfrentan entre sí.
     while (libre < 32) {
-        int idxSegundo1 = -1;
-        for (int i = 12; i <= 23; i++) {
-            if (referencia[i] != 0) {
-                idxSegundo1 = i;
+        short int filaSegundo1 = -1;
+
+        for (short int fila = 0; fila < 12; fila++) {
+            if (!esPeorSegundo[fila] &&
+                !segundoUsado[fila] &&
+                grupos[fila][1] != 0) {
+                filaSegundo1 = fila;
                 break;
             }
         }
 
-        if (idxSegundo1 == -1) {
+        if (filaSegundo1 == -1) {
             return false;
         }
 
-        Equipo* segundo1 = referencia[idxSegundo1];
-        referencia[idxSegundo1] = 0;
+        segundoUsado[filaSegundo1] = true;
 
-        int idxSegundo2 = -1;
-        for (int i = 12; i <= 23; i++) {
-            if (referencia[i] != 0 && referencia[i]->getGrupo() != segundo1->getGrupo()) {
-                idxSegundo2 = i;
+        short int filaSegundo2 = -1;
+
+        for (short int fila = 0; fila < 12; fila++) {
+            if (!esPeorSegundo[fila] &&
+                !segundoUsado[fila] &&
+                fila != filaSegundo1 &&
+                grupos[fila][1] != 0) {
+                filaSegundo2 = fila;
                 break;
             }
         }
 
-        if (idxSegundo2 == -1) {
+        if (filaSegundo2 == -1) {
             return false;
         }
 
-        faseFixture[libre] = segundo1;
-        faseFixture[libre + 1] = referencia[idxSegundo2];
+        segundoUsado[filaSegundo2] = true;
 
-        referencia[idxSegundo2] = 0;
+        arregloFixtureInterno[libre] = grupos[filaSegundo1][1];
+        arregloFixtureInterno[libre + 1] = grupos[filaSegundo2][1];
 
         libre += 2;
     }
+
+    faseFixture = arregloFixtureInterno;
+    cantidadActual = 32;
+    ganadoresRegistrados = 0;
+
+    perdedoresSemifinal[0] = 0;
+    perdedoresSemifinal[1] = 0;
+    cantidadPerdedoresSemifinal = 0;
 
     return true;
 }
@@ -167,11 +195,6 @@ bool Fixture::organizarR16() {
 bool Fixture::organizarFixture() {
     if (faseFixture == 0 || cantidadActual < 2) {
         return false;
-    }
-
-    if (cantidadActual == 32) {
-        ganadoresRegistrados = 0;
-        return organizarR16();
     }
 
     ganadoresRegistrados = 0;
@@ -212,7 +235,7 @@ bool Fixture::registrarGanadorPartido(int numeroPartido, Equipo* ganador) {
 
     int totalPartidos = cantidadActual / 2;
 
-    // Esta versión asume que los partidos se resuelven en orden:
+    // Esta version asume que los partidos se resuelven en orden:
     // 0, 1, 2, 3, ...
     if (numeroPartido != ganadoresRegistrados) {
         return false;
@@ -245,7 +268,7 @@ bool Fixture::registrarGanadorPartido(int numeroPartido, Equipo* ganador) {
 }
 
 void Fixture::registrarPerdedorSemifinal(Equipo* perdedor) {
-    if (cantidadPerdedoresSemifinal < 2) {
+    if (cantidadActual == 4 && cantidadPerdedoresSemifinal < 2) {
         perdedoresSemifinal[cantidadPerdedoresSemifinal] = perdedor;
         cantidadPerdedoresSemifinal++;
     }
@@ -306,6 +329,7 @@ int Fixture::contarEquiposPorConfederacion(const char* nombreConfederacion) cons
     }
 
     int contador = 0;
+
     for (int i = 0; i < cantidadActual; i++) {
         if (faseFixture[i] != 0) {
             if (strcmp(faseFixture[i]->getConfederacion(), nombreConfederacion) == 0) {
@@ -331,6 +355,7 @@ const char* Fixture::obtenerConfederacionDominante(bool& hayEmpate, int& cantida
     for (int i = 0; i < cantidadActual; i++) {
         if (faseFixture[i] != 0) {
             short int indice = convertirConfederacionAIndice(faseFixture[i]->getConfederacion());
+
             if (indice >= 0 && indice < TOTAL_CONFEDERACIONES) {
                 conteo[indice]++;
             }
@@ -359,5 +384,6 @@ const char* Fixture::getNombreFaseActual() const {
     if (cantidadActual == 8)  return "QF";
     if (cantidadActual == 4)  return "SF";
     if (cantidadActual == 2)  return "FINAL";
+    if (cantidadActual == 1)  return "CAMPEON";
     return "DESCONOCIDA";
 }

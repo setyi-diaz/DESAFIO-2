@@ -6,6 +6,8 @@
 class Fixture {
 private:
     Equipo** faseFixture;
+    Equipo* arregloFixtureInterno[32];
+
     int cantidadActual;
     int ganadoresRegistrados;
 
@@ -13,15 +15,20 @@ private:
     int cantidadPerdedoresSemifinal;
 
 private:
-    bool organizarR16();
+    bool filaValida(short int fila) const;
+    bool validarFilasSinRepetir(const short int filas[], int cantidad) const;
+
     short int convertirConfederacionAIndice(const char* nombreConfederacion) const;
     const char* obtenerNombreConfederacionPorIndice(short int indice) const;
 
 public:
     Fixture();
-    Fixture(Equipo** equipos, int cantidad);
 
-    void recibirEquiposFase(Equipo** equipos, int cantidad);
+    bool organizarR16DesdeGrupos(
+        Equipo* grupos[12][4],
+        const short int mejoresTerceros[8],
+        const short int peoresSegundos[4]
+        );
 
     bool organizarFixture();
 
