@@ -9,7 +9,7 @@ private:
     unsigned short rojas;
     unsigned short faltas;
 public:
-    Jugador();
+    Jugador(unsigned short = 0,unsigned short = 0,unsigned short = 0,unsigned short = 0);
     unsigned short getGolesMarcados() const;
     void setGolesMarcados(unsigned short newGoles);
     unsigned short getAmarillas() const;

@@ -19,6 +19,8 @@ int main()
     }
     Eliminatoria faseDeGrupos(selecciones);
     faseDeGrupos.imprimirGruposConformados();
+    faseDeGrupos.ordenarGrupos();
+    faseDeGrupos.imprimirGruposConformados();
     actualizarEstadisticasSelecciones(selecciones, cont);
     delete[] selecciones;
     selecciones = nullptr;
