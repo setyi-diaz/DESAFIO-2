@@ -2,13 +2,18 @@
 #include <iostream>
 #include <random>
 
-Eliminatoria::Eliminatoria(Equipo* ptrSelecciones) {
+Eliminatoria::Eliminatoria(Equipo* ptrSelecciones){
     for (int i = 0; i < 12; ++i){
         grupos[i] = new Equipo* [4];
     }
     short int bombos[48];
     conformarBombos(bombos);
     conformarGrupos(ptrSelecciones,bombos);
+}
+Eliminatoria::~Eliminatoria() {
+    for (int i = 0; i < 12; ++i){
+        delete[] grupos[i];
+    }
 }
 void Eliminatoria::conformarBombos(short int* ptrBombos){
 
@@ -113,15 +118,66 @@ void Eliminatoria::imprimirGruposConformados(){
         }
     }
 }
-Eliminatoria::~Eliminatoria() {
-    for (int i = 0; i < 12; ++i){
-        delete[] grupos[i];
+void Eliminatoria::simularPartidos(){
+    for(unsigned short i = 0; i < 4; i++){
+        for(unsigned short j = i + 1; j < 4; j++){
+            for(unsigned short k = 0; k < 3; k++){
+                if(k == 0){
+                    // partidoUno(grupos[0][i],grupos[0][j]).simularPartido();
+                    // partidoDos(grupos[1][i],grupos[1][j]).simularPartido();
+                    // partidoTres(grupos[2][i],grupos[2][j]).simularPartido();
+                    // partidoCuatro(grupos[3][i],grupos[3][j]).simularPartido();
+                }
+                else if (k == 1){
+
+                }
+            }
+        }
     }
 }
+void Eliminatoria::ordenar(unsigned short len){
+    for (unsigned short i = 0; i < 12; i++){
+        ordenarSubArreglo(0, len - 1, grupos[i]);
+    }
+}
+void Eliminatoria::ordenarSubArreglo(unsigned short inferior, unsigned short superior,Equipo** ptr){
+    if((superior - inferior) >= 1){
+        unsigned short medio1 = (superior + inferior) / 2;
+        unsigned short medio2 = medio1 + 1;
 
+        ordenarSubArreglo(inferior,medio1,ptr);
+        ordenarSubArreglo(medio2,superior,ptr);
+        combinar(inferior, medio1, medio2, superior,ptr);
+    }
+}
+void Eliminatoria::combinar(unsigned short izquirdo, unsigned short medio1, unsigned short medio2, unsigned short derecho,Equipo** ptr){
+    unsigned short indiceIzq = izquirdo;
+    unsigned short indiceDer = medio2;
+    unsigned short indiceCombinado = izquirdo;
+    unsigned short size = derecho - izquirdo + 1;
+    Equipo** temp = new Equipo*[size];
 
-
-
+    while( indiceIzq <= medio1 && indiceDer <= derecho){
+        if (ptr[indiceIzq]->getPartidosGanados() <= ptr[indiceDer]->getPartidosGanados())
+            temp[indiceCombinado++] = ptr[indiceIzq++];
+        else
+            temp[indiceCombinado++] = ptr[indiceDer++];
+    }
+    if(indiceIzq > medio1){
+        while( indiceDer <= derecho){
+            temp[indiceCombinado++] = ptr[indiceDer++];
+        }
+    }
+    else{
+        while(indiceIzq <= medio1){
+            temp[indiceCombinado++] = ptr[indiceIzq++];
+        }
+    }
+    for(unsigned short i = 0; i < size; i++){
+        ptr[izquirdo + i] = temp[i];
+    }
+    delete[] temp;
+}
 
 
 

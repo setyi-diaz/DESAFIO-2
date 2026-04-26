@@ -1,7 +1,10 @@
 #include "jugador.h"
 
-Jugador::Jugador() {
-
+Jugador::Jugador(unsigned short Gol, unsigned short tarAma, unsigned short tarRoja, unsigned short fal){
+    golesMarcados = Gol;
+    amarillas = tarAma;
+    rojas = tarRoja;
+    faltas = fal;
 }
 unsigned short Jugador::getGolesMarcados() const{
     return golesMarcados;
