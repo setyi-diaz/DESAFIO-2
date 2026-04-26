@@ -1,12 +1,21 @@
 #include "partido.h"
-
-Partido::Partido(Equipo* eq1,Equipo* eq2){
-    equipo1 = eq1;
-    equipo2 = eq2;
-    amarillasEq1[11] = {0};
-    amarillasEq2[11] = {0};
-    faltasEq1[11] = {0};
-    faltasEq2[11] = {0};
+Partido::Partido(): equipo1(nullptr),equipo2(nullptr),golesEq1(0),golesEq2(0),posesion(50.0){
+    for (short int i = 0; i < 11; i++) {
+        amarillasEq1[i] = 0;
+        amarillasEq2[i] = 0;
+        faltasEq1[i]    = 0;
+        faltasEq2[i]    = 0;
+    }
+}
+Partido::Partido(Equipo* eq1, Equipo* eq2,short int gEq1, short int gEq2,short int amEq1[11], short int amEq2[11],short int fEq1[11],
+                 short int fEq2[11],double pos): equipo1(eq1),equipo2(eq2),golesEq1(gEq1),golesEq2(gEq2),posesion(pos)
+{
+    for (short int i = 0; i < 11; i++) {
+        amarillasEq1[i] = amEq1[i];
+        amarillasEq2[i] = amEq2[i];
+        faltasEq1[i]    = fEq1[i];
+        faltasEq2[i]    = fEq2[i];
+    }
 }
 void Partido::calcularGoles(){
     double mu = 1.35;

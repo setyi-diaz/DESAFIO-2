@@ -26,7 +26,9 @@ private:
     void distribuirFaltas(double p1 = 0.13,double p2 = 0.0275,double p3 = 0.007);
 
 public:
-    Partido(Equipo* = nullptr,Equipo* = nullptr);
+    Partido();
+    Partido(Equipo* eq1, Equipo* eq2,short int gEq1, short int gEq2,short int amEq1[11], short int amEq2[11],short int fEq1[11],
+            short int fEq2[11],double pos);
     void simularPartido();
     void imprimirEstadisticasDelPartido();
 };
