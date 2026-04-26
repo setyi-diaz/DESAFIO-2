@@ -118,6 +118,62 @@ void Partido::simularPartido(){
     distribuirFaltas();
     distribuirTarjetas();
 }
+
+
+//simular partido en la fase del fixture
+Equipo* Partido::simularPartido(Equipo* eq1, Equipo* eq2, unsigned short rankingEq1, unsigned short rankingEq2)
+{
+    if (eq1 == nullptr || eq2 == nullptr) {
+        return nullptr;
+    }
+
+    equipo1 = eq1;
+    equipo2 = eq2;
+
+    golesEq1 = 0;
+    golesEq2 = 0;
+    posesion = 50.0;
+
+    for (unsigned short i = 0; i < 11; i++) {
+        amarillasEq1[i] = 0;
+        amarillasEq2[i] = 0;
+        faltasEq1[i] = 0;
+        faltasEq2[i] = 0;
+    }
+
+    calcularGoles();
+    calcularPosesion();
+
+    equipo1->elegirTitulares();
+    equipo2->elegirTitulares();
+
+    distribuirGoles();
+    distribuirFaltas();
+    distribuirTarjetas();
+
+    if (golesEq1 > golesEq2) {
+        return equipo1;
+    }
+
+    if (golesEq2 > golesEq1) {
+        return equipo2;
+    }
+
+    // Desempate por ranking
+    if (rankingEq1 < rankingEq2) {
+        golesEq1++;
+        equipo1->getConvocado(0)->setGolesMarcados(1);
+        return equipo1;
+    }
+    else {
+        golesEq2++;
+        equipo2->getConvocado(0)->setGolesMarcados(1);
+        return equipo2;
+    }
+}
+
+
+
 void Partido::imprimirEstadisticasDelPartido(){
     unsigned short totalFaltasEq1 = 0;
     unsigned short totalFaltasEq2 = 0;
