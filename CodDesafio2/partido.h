@@ -31,6 +31,8 @@ public:
     Partido(Equipo* eq1, Equipo* eq2,short int gEq1, short int gEq2,short int amEq1[11], short int amEq2[11],short int fEq1[11],
             short int fEq2[11],double pos);
     void simularPartido(Equipo* ,Equipo*);
+    void simularPartido();
+    Equipo* simularPartido(Equipo* eq1, Equipo* eq2, unsigned short rankingEq1, unsigned short rankingEq2);
     void imprimirEstadisticasDelPartido();
 };
 
