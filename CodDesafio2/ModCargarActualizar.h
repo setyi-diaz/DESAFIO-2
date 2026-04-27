@@ -6,4 +6,7 @@
 Equipo* cargarEstadisticasSelecciones(unsigned short& ,unsigned short&);
 void actualizarEstadisticasSelecciones(Equipo* , unsigned short&);
 
+void cargarEstadisticasJugadores(Equipo* selecciones, unsigned short& contRef);
+void actualizarEstadisticasJugadores(Equipo* selecciones, unsigned short& contRef);
+
 #endif // MODCARGARACTUALIZAR_H

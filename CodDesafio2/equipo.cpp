@@ -56,7 +56,7 @@ void Equipo::elegirTitulares(){
     std::mt19937 gen(rd());
     Jugador* temp;
 
-    for (short int i = 27; i > 0; i--) {
+    for (short int i = 26; i > 0; i--) {
         std::uniform_int_distribution<unsigned int> dist(0, i);
         unsigned int j = dist(gen);
         temp = convocados[i];
@@ -84,6 +84,13 @@ Jugador* Equipo::getConvocado(unsigned int i) {
 
 const Jugador* Equipo::getConvocado(unsigned int  i) const {
     return convocados[i];
+}
+
+void Equipo::setConvocado(unsigned int i, Jugador* jugador)
+{
+    if (i < 26) {
+        convocados[i] = jugador;
+    }
 }
 
 const char* Equipo::getPais() const{

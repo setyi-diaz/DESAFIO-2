@@ -119,3 +119,112 @@ void actualizarEstadisticasSelecciones(Equipo* selecciones, unsigned short& cont
             << temp.getPartidosPerdidos() << '\n';
     }
 }
+
+
+
+void cargarEstadisticasJugadores(Equipo* selecciones, unsigned short& contRef) {
+    ifstream archivoJugadores("jugadores_48_equipos_estadisticas_0.csv", ios::in);
+
+    if (!archivoJugadores.is_open())
+        throw std::runtime_error("No se pudo abrir el archivo de jugadores");
+
+    string lineaDescarte;
+    getline(archivoJugadores, lineaDescarte); // Descarta el encabezado
+
+    char pais[25] = {'\0'};
+    unsigned short camiseta;
+    unsigned short goles;
+    unsigned short minutos;
+    unsigned short amarillas;
+    unsigned short rojas;
+    unsigned short faltas;
+
+    string linea, temp;
+    linea.reserve(100);
+    stringstream ss;
+
+    while (getline(archivoJugadores, linea)) {
+        ss.str(linea);
+        ss.clear();
+
+        getline(ss, temp, ';');
+        strncpy(pais, temp.c_str(), sizeof(pais) - 1);
+        pais[sizeof(pais) - 1] = '\0';
+
+        getline(ss, temp, ';');
+        camiseta = (unsigned short)stoi(temp);
+
+        getline(ss, temp, ';');
+        goles = (unsigned short)stoi(temp);
+
+        getline(ss, temp, ';');
+        minutos = (unsigned short)stoi(temp);
+
+        getline(ss, temp, ';');
+        amarillas = (unsigned short)stoi(temp);
+
+        getline(ss, temp, ';');
+        rojas = (unsigned short)stoi(temp);
+
+        getline(ss, temp);
+        faltas = (unsigned short)stoi(temp);
+
+        if (camiseta < 1 || camiseta > 26) {
+            continue;
+        }
+
+        for (unsigned short i = 0; i < contRef; i++) {
+            if ((string)pais == (string)selecciones[i].getPais()) {
+                Jugador* jugador = new Jugador(camiseta,
+                                               goles,
+                                               minutos,
+                                               amarillas,
+                                               rojas,
+                                               faltas);
+
+                selecciones[i].setConvocado(camiseta - 1, jugador);
+                break;
+            }
+        }
+    }
+
+    archivoJugadores.close();
+}
+
+void actualizarEstadisticasJugadores(Equipo* selecciones, unsigned short& contRef) {
+    ofstream archivoJugadores("jugadores_48_equipos_estadisticas_0.csv", ios::out | ios::trunc);
+
+    if (!archivoJugadores.is_open())
+        throw std::runtime_error("No se pudo abrir el archivo de jugadores para escritura");
+
+    archivoJugadores << "Pais;Camiseta;Goles;Minutos;Tarjetas Amar;Tarjetas Rojas;Faltas\n";
+
+    for (unsigned short i = 0; i < contRef; i++) {
+        for (unsigned short j = 0; j < 26; j++) {
+            const Jugador* temp = selecciones[i].getConvocado(j);
+
+            if (temp == nullptr) {
+                archivoJugadores
+                    << (string)selecciones[i].getPais() << ';'
+                    << j + 1 << ';'
+                    << 0 << ';'
+                    << 0 << ';'
+                    << 0 << ';'
+                    << 0 << ';'
+                    << 0 << '\n';
+            }
+            else {
+                archivoJugadores
+                    << (string)selecciones[i].getPais() << ';'
+                    << temp->getCamiseta() << ';'
+                    << temp->getGolesMarcadosHist() << ';'
+                    << temp->getMinutosJugados() << ';'
+                    << temp->getAmarillas() << ';'
+                    << temp->getRojas() << ';'
+                    << temp->getFaltas() << '\n';
+            }
+        }
+    }
+
+    archivoJugadores.close();
+}

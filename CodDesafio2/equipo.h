@@ -27,36 +27,49 @@ private:
     Jugador* convocados[26];
 public:
     Equipo(unsigned short = 0, const char * const = "", const char * const = "", const char * const = "",
-           const char * const = "", unsigned short = 0,unsigned short = 0, unsigned short = 0, unsigned short = 0,
-           unsigned short = 0,unsigned short = 0);
+           const char * const = "", unsigned short = 0, unsigned short = 0, unsigned short = 0, unsigned short = 0,
+           unsigned short = 0, unsigned short = 0);
 
     const Equipo &operator=(const Equipo &);
     void elegirTitulares();
 
     unsigned short getRanking() const;
     void setRanking(unsigned short newRanking);
+
     const char* getPais() const;
     //void setPais();
+
     const char* getDt() const;
     //void setDt();
+
     const char* getFederacion() const;
     //void setFederacion();
+
     const char* getConfederacion() const;
     //void setConfederacion();
+
     unsigned short getGolesEnContra() const;
     void setGolesEnContra(unsigned short newGolesEnContra);
+
     unsigned short getPartidosGanados() const;
     void setPartidosGanados(unsigned short newPartidosGanados);
+
     unsigned short getPartidosEmpatados() const;
     void setPartidosEmpatados(unsigned short newPartidosEmpatados);
+
     unsigned short getPartidosPerdidos() const;
     void setPartidosPerdidos(unsigned short newPartidosPerdidos);
-    Jugador* getConvocado(unsigned int i); //modificacion
-    const Jugador* getConvocado(unsigned int i) const;  //solo lectura
+
+    Jugador* getConvocado(unsigned int i);              // modificacion
+    const Jugador* getConvocado(unsigned int i) const;  // solo lectura
+    void setConvocado(unsigned int i, Jugador* jugador);
+
     short getPrioridadSorteo() const;
     void setPrioridadSorteo(short newPrioridadSorteo);
+
     unsigned short getGolesAFavorActual() const;
     void setGolesAFavorActual(unsigned short newGolesAFavorActual);
+
     unsigned short getGolesAFavorHist() const;
     void setGolesAFavorHist(unsigned short newGolesAFavorHist);
 };
