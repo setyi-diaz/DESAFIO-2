@@ -48,7 +48,7 @@ bool Fecha::esValida()
         return false;
     }
 
-    if (mes < 1 || mes > 12) {
+    if ((mes < 1) || (mes > 12)) {
         return false;
     }
 

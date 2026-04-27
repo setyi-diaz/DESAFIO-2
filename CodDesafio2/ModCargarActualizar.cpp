@@ -123,7 +123,7 @@ void actualizarEstadisticasSelecciones(Equipo* selecciones, unsigned short& cont
 
 
 void cargarEstadisticasJugadores(Equipo* selecciones, unsigned short& contRef) {
-    ifstream archivoJugadores("jugadores_48_equipos_estadisticas_0.csv", ios::in);
+    ifstream archivoJugadores("jugadores.csv", ios::in);
 
     if (!archivoJugadores.is_open())
         throw std::runtime_error("No se pudo abrir el archivo de jugadores");
@@ -169,7 +169,7 @@ void cargarEstadisticasJugadores(Equipo* selecciones, unsigned short& contRef) {
         getline(ss, temp);
         faltas = (unsigned short)stoi(temp);
 
-        if (camiseta < 1 || camiseta > 26) {
+        if ((camiseta < 1) || (camiseta > 26)) {
             continue;
         }
 
@@ -192,7 +192,7 @@ void cargarEstadisticasJugadores(Equipo* selecciones, unsigned short& contRef) {
 }
 
 void actualizarEstadisticasJugadores(Equipo* selecciones, unsigned short& contRef) {
-    ofstream archivoJugadores("jugadores_48_equipos_estadisticas_0.csv", ios::out | ios::trunc);
+    ofstream archivoJugadores("jugadores.csv", ios::out | ios::trunc);
 
     if (!archivoJugadores.is_open())
         throw std::runtime_error("No se pudo abrir el archivo de jugadores para escritura");

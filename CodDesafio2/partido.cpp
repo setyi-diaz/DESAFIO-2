@@ -35,9 +35,20 @@ void Partido::calcularGoles(){
     equipo2->setGolesEnContra(golesEq1);
 }
 void Partido::calcularPosesion(){
-    double termino1 = 1 / equipo1->getRanking();
-    double termino2 = 1 / equipo2->getRanking();
-    posesion = 100 * (termino1/(termino1 + termino2));
+    if (equipo1 == nullptr || equipo2 == nullptr) {
+        posesion = 50.0;
+        return;
+    }
+
+    if (equipo1->getRanking() == 0 || equipo2->getRanking() == 0) {
+        posesion = 50.0;
+        return;
+    }
+
+    double termino1 = 1.0 / equipo1->getRanking();
+    double termino2 = 1.0 / equipo2->getRanking();
+
+    posesion = 100.0 * (termino1 / (termino1 + termino2));
 }
 std::mt19937 Partido::gen(std::random_device{}());
 
@@ -142,19 +153,12 @@ void Partido::simularPartido(Equipo* Eq1,Equipo* Eq2){
     equipo2 = Eq2;
 
     calcularGoles();
-    cout<<"calcularGoles\n";
     calcularPosesion();
-    cout<<"calcularPosesion\n";
     equipo1->elegirTitulares();
-    cout<<"elegirTitulares1\n";
     equipo2->elegirTitulares();
-    cout<<"elegirTitulares2\n";
     distribuirGoles();
-    cout<<"distribuirGoles\n";
     distribuirFaltas();
-    cout<<"distribuirFaltas\n";
     distribuirTarjetas();
-    cout<<"distribuirTarjetas\n";
 }
 
 
@@ -200,12 +204,12 @@ Equipo* Partido::simularPartido(Equipo* eq1, Equipo* eq2, unsigned short ranking
     // Desempate por ranking
     if (rankingEq1 < rankingEq2) {
         golesEq1++;
-        equipo1->getConvocado(0)->setGolesMarcados(1);
+        equipo1->getConvocado(0)->setGolesMarcadosActual(1);
         return equipo1;
     }
     else {
         golesEq2++;
-        equipo2->getConvocado(0)->setGolesMarcados(1);
+        equipo2->getConvocado(0)->setGolesMarcadosActual(1);
         return equipo2;
     }
 }
@@ -213,28 +217,70 @@ Equipo* Partido::simularPartido(Equipo* eq1, Equipo* eq2, unsigned short ranking
 
 
 void Partido::imprimirEstadisticasDelPartido(){
+    if (equipo1 == nullptr || equipo2 == nullptr) {
+        cout << "No hay equipos asignados para imprimir estadisticas.\n";
+        return;
+    }
+
     unsigned short totalFaltasEq1 = 0;
     unsigned short totalFaltasEq2 = 0;
     unsigned short totalAmarillasEq1 = 0;
     unsigned short totalAmarillasEq2 = 0;
     unsigned short totalRojasEq1 = 0;
     unsigned short totalRojasEq2 = 0;
-    cout<<"Equipo: "<<(string)(equipo1->getPais())<<"     "<<"vs"<<"    "<<"Equipo: "<<(string)(equipo2->getPais())<<endl;
-    cout<<golesEq1<<"        "<<"marcador"<<"         "<<golesEq2<<endl;
-    cout<<posesion<<"%        "<<"posesion"<<"        "<<(100.0 - posesion)<<"%"<<endl;
+
     for (unsigned short i = 0; i < 11; i++){
         totalFaltasEq1 += faltasEq1[i];
         totalFaltasEq2 += faltasEq2[i];
+
         totalAmarillasEq1 += amarillasEq1[i];
-        if (amarillasEq1[i] == 2){
-            totalRojasEq1 ++;
-        }
         totalAmarillasEq2 += amarillasEq2[i];
+
+        if (amarillasEq1[i] == 2){
+            totalRojasEq1++;
+        }
+
         if (amarillasEq2[i] == 2){
-            totalRojasEq2 ++;
+            totalRojasEq2++;
         }
     }
-    cout<<totalFaltasEq1<<"    "<<"faltas"<<"    "<<totalFaltasEq2<<endl;
-    cout<<totalAmarillasEq1<<"    "<<"amarillas"<<"   "<<totalAmarillasEq2<<endl;
-    cout<<totalRojasEq1<<"    "<<"rojas"<<"   "<<totalRojasEq2;
+
+    cout << "\n";
+    cout << "====================================================\n";
+    cout << "              ESTADISTICAS DEL PARTIDO              \n";
+    cout << "====================================================\n";
+
+    cout << std::left << std::setw(18) << "Estadistica"
+         << std::right << std::setw(15) << equipo1->getPais()
+         << std::right << std::setw(15) << equipo2->getPais()
+         << endl;
+
+    cout << "----------------------------------------------------\n";
+
+    cout << std::left << std::setw(18) << "Marcador"
+         << std::right << std::setw(15) << golesEq1
+         << std::right << std::setw(15) << golesEq2
+         << endl;
+
+    cout << std::left << std::setw(18) << "Posesion"
+         << std::right << std::setw(14) << std::fixed << std::setprecision(2) << posesion << "%"
+         << std::right << std::setw(14) << std::fixed << std::setprecision(2) << (100.0 - posesion) << "%"
+         << endl;
+
+    cout << std::left << std::setw(18) << "Faltas"
+         << std::right << std::setw(15) << totalFaltasEq1
+         << std::right << std::setw(15) << totalFaltasEq2
+         << endl;
+
+    cout << std::left << std::setw(18) << "Amarillas"
+         << std::right << std::setw(15) << totalAmarillasEq1
+         << std::right << std::setw(15) << totalAmarillasEq2
+         << endl;
+
+    cout << std::left << std::setw(18) << "Rojas"
+         << std::right << std::setw(15) << totalRojasEq1
+         << std::right << std::setw(15) << totalRojasEq2
+         << endl;
+
+    cout << "====================================================\n\n";
 }

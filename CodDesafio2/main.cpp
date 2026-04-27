@@ -11,6 +11,7 @@ int main()
     unsigned short indAnfitrion = 0;
     try {
         selecciones = cargarEstadisticasSelecciones(cont,indAnfitrion);
+        cargarEstadisticasJugadores(selecciones,cont);
     } catch (const exception& e) {
         cerr << e.what() << "\n";
         delete [] selecciones;

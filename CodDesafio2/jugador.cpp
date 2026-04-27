@@ -31,16 +31,6 @@ void Jugador::setCamiseta(unsigned short newCamiseta)
     camiseta = newCamiseta;
 }
 
-unsigned short Jugador::getGolesMarcados() const
-{
-    return golesMarcados;
-}
-
-void Jugador::setGolesMarcados(unsigned short newGoles)
-{
-    golesMarcados += newGoles;
-}
-
 unsigned short Jugador::getGolesMarcadosActual() const
 {
     return golesMarcados;

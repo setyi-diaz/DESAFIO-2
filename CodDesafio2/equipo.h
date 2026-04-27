@@ -35,28 +35,16 @@ public:
 
     unsigned short getRanking() const;
     void setRanking(unsigned short newRanking);
-
     const char* getPais() const;
-    //void setPais();
-
     const char* getDt() const;
-    //void setDt();
-
     const char* getFederacion() const;
-    //void setFederacion();
-
     const char* getConfederacion() const;
-    //void setConfederacion();
-
     unsigned short getGolesEnContra() const;
     void setGolesEnContra(unsigned short newGolesEnContra);
-
     unsigned short getPartidosGanados() const;
     void setPartidosGanados(unsigned short newPartidosGanados);
-
     unsigned short getPartidosEmpatados() const;
     void setPartidosEmpatados(unsigned short newPartidosEmpatados);
-
     unsigned short getPartidosPerdidos() const;
     void setPartidosPerdidos(unsigned short newPartidosPerdidos);
 

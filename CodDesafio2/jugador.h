@@ -28,9 +28,6 @@ public:
     unsigned short getCamiseta() const;
     void setCamiseta(unsigned short newCamiseta);
 
-    unsigned short getGolesMarcados() const;
-    void setGolesMarcados(unsigned short newGoles);
-
     unsigned short getGolesMarcadosActual() const;
     void setGolesMarcadosActual(unsigned short newGolesMarcadosActual);
 

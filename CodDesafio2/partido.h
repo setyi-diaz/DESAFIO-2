@@ -3,6 +3,9 @@
 #include "equipo.h"
 #include <cmath>
 #include <iostream>
+#include <random>
+#include <iomanip>
+using std::setw;
 using std::cout;
 using std::endl;
 

@@ -56,7 +56,7 @@ void Equipo::elegirTitulares(){
     std::mt19937 gen(rd());
     Jugador* temp;
 
-    for (short int i = 26; i > 0; i--) {
+    for (short int i = 25; i > 0; i--) {
         std::uniform_int_distribution<unsigned int> dist(0, i);
         unsigned int j = dist(gen);
         temp = convocados[i];
