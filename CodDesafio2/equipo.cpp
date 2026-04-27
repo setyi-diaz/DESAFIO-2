@@ -1,9 +1,17 @@
 #include "equipo.h"
+#include "ModContadorRecursos.h"
 
 Equipo::Equipo(unsigned short r, const  char* const p, const char* const d, const char* const f, const char* const c, unsigned short gfA,
                unsigned short gfH,unsigned short gc, unsigned short pg, unsigned short pe, unsigned short pp) {
 
     ranking = r;
+    prioridadSorteo = 0;
+
+    for (short int i = 0; i < 26; i++) {
+        ContadorRecursos::registrarIteracion();
+        convocados[i] = nullptr;
+    }
+
     unsigned short len = strlen(p);
     len = ( len < 25 ? len : 24);
     strncpy(pais, p, len);
@@ -31,6 +39,17 @@ Equipo::Equipo(unsigned short r, const  char* const p, const char* const d, cons
     partidosEmpatados = pe;
     partidosPerdidos = pp;
 }
+
+Equipo::~Equipo(){
+    for (short int i = 0; i < 26; i++) {
+        ContadorRecursos::registrarIteracion();
+        if (convocados[i] != nullptr) {
+            ContadorRecursos::liberarMemoria(convocados[i], 1);
+            delete convocados[i];
+            convocados[i] = nullptr;
+        }
+    }
+}
 const Equipo& Equipo::operator=(const Equipo &derecha){
     if (&derecha != this){
         ranking = derecha.getRanking();
@@ -57,6 +76,7 @@ void Equipo::elegirTitulares(){
     Jugador* temp;
 
     for (short int i = 25; i > 0; i--) {
+        ContadorRecursos::registrarIteracion();
         std::uniform_int_distribution<unsigned int> dist(0, i);
         unsigned int j = dist(gen);
         temp = convocados[i];

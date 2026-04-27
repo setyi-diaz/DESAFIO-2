@@ -1,4 +1,5 @@
 #include "jugador.h"
+#include "ModContadorRecursos.h"
 
 Jugador::Jugador(unsigned short cam,
                  unsigned short golesHist,

@@ -20,7 +20,12 @@ public:
 
     static bool esValida();
     static void avanzarDia();
+    static void avanzarDias(short int cantidadDias);
     static void imprimirFecha();
+
+    // Copia la fecha actual en formato dd/mm/aaaa.
+    // capacidad debe ser minimo 11 para incluir el caracter '\0'.
+    static void copiarFecha(char destino[], short int capacidad);
 };
 
 #endif

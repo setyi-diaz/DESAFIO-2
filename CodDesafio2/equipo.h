@@ -29,6 +29,7 @@ public:
     Equipo(unsigned short = 0, const char * const = "", const char * const = "", const char * const = "",
            const char * const = "", unsigned short = 0, unsigned short = 0, unsigned short = 0, unsigned short = 0,
            unsigned short = 0, unsigned short = 0);
+    ~Equipo();
 
     const Equipo &operator=(const Equipo &);
     void elegirTitulares();

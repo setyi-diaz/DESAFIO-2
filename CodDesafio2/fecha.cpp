@@ -1,5 +1,6 @@
 #include "fecha.h"
 #include <iostream>
+#include "ModContadorRecursos.h"
 
 using namespace std;
 
@@ -74,6 +75,14 @@ void Fecha::avanzarDia()
     }
 }
 
+void Fecha::avanzarDias(short int cantidadDias)
+{
+    for (short int i = 0; i < cantidadDias; i++) {
+        ContadorRecursos::registrarIteracion();
+        avanzarDia();
+    }
+}
+
 void Fecha::imprimirFecha()
 {
     if (dia < 10) {
@@ -87,6 +96,30 @@ void Fecha::imprimirFecha()
     }
 
     cout << mes << "/" << anio;
+}
+
+void Fecha::copiarFecha(char destino[], short int capacidad)
+{
+    if (destino == 0 || capacidad < 11) {
+        return;
+    }
+
+    destino[0] = char('0' + (dia / 10));
+    destino[1] = char('0' + (dia % 10));
+    destino[2] = '/';
+    destino[3] = char('0' + (mes / 10));
+    destino[4] = char('0' + (mes % 10));
+    destino[5] = '/';
+
+    short int tempAnio = anio;
+    destino[9] = char('0' + (tempAnio % 10));
+    tempAnio /= 10;
+    destino[8] = char('0' + (tempAnio % 10));
+    tempAnio /= 10;
+    destino[7] = char('0' + (tempAnio % 10));
+    tempAnio /= 10;
+    destino[6] = char('0' + (tempAnio % 10));
+    destino[10] = '\0';
 }
 
 bool Fecha::esBisiesto()

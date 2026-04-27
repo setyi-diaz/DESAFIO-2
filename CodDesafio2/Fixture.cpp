@@ -1,5 +1,6 @@
 #include "fixture.h"
 #include <cstring>
+#include "ModContadorRecursos.h"
 
 using std::strcmp;
 
@@ -9,6 +10,7 @@ Fixture::Fixture() {
     ganadoresRegistrados = 0;
 
     for (int i = 0; i < 32; i++) {
+        ContadorRecursos::registrarIteracion();
         arregloFixtureInterno[i] = 0;
     }
 
@@ -27,11 +29,13 @@ bool Fixture::validarFilasSinRepetir(const short int filas[], int cantidad) cons
     }
 
     for (int i = 0; i < cantidad; i++) {
+        ContadorRecursos::registrarIteracion();
         if (!filaValida(filas[i])) {
             return false;
         }
 
         for (int j = i + 1; j < cantidad; j++) {
+            ContadorRecursos::registrarIteracion();
             if (filas[i] == filas[j]) {
                 return false;
             }
@@ -63,16 +67,19 @@ bool Fixture::organizarR16DesdeGrupos(
     bool esPeorSegundo[12];
 
     for (int i = 0; i < 12; i++) {
+        ContadorRecursos::registrarIteracion();
         primeroUsado[i] = false;
         segundoUsado[i] = false;
         esPeorSegundo[i] = false;
     }
 
     for (int i = 0; i < 4; i++) {
+        ContadorRecursos::registrarIteracion();
         esPeorSegundo[peoresSegundos[i]] = true;
     }
 
     for (int i = 0; i < 32; i++) {
+        ContadorRecursos::registrarIteracion();
         arregloFixtureInterno[i] = 0;
     }
 
@@ -80,6 +87,7 @@ bool Fixture::organizarR16DesdeGrupos(
 
     // 1) Ocho partidos: cabeza de grupo vs tercer puesto clasificado.
     for (int i = 0; i < 8; i++) {
+        ContadorRecursos::registrarIteracion();
         short int filaTercero = mejoresTerceros[i];
 
         if (!filaValida(filaTercero) || grupos[filaTercero][2] == 0) {
@@ -89,6 +97,7 @@ bool Fixture::organizarR16DesdeGrupos(
         short int filaPrimeroElegido = -1;
 
         for (short int filaPrimero = 0; filaPrimero < 12; filaPrimero++) {
+            ContadorRecursos::registrarIteracion();
             if (!primeroUsado[filaPrimero] &&
                 filaPrimero != filaTercero &&
                 grupos[filaPrimero][0] != 0) {
@@ -110,6 +119,7 @@ bool Fixture::organizarR16DesdeGrupos(
 
     // 2) Cuatro partidos: cabezas de grupo restantes vs 4 peores segundos.
     for (int i = 0; i < 4; i++) {
+        ContadorRecursos::registrarIteracion();
         short int filaSegundo = peoresSegundos[i];
 
         if (!filaValida(filaSegundo) || grupos[filaSegundo][1] == 0) {
@@ -119,6 +129,7 @@ bool Fixture::organizarR16DesdeGrupos(
         short int filaPrimeroElegido = -1;
 
         for (short int filaPrimero = 0; filaPrimero < 12; filaPrimero++) {
+            ContadorRecursos::registrarIteracion();
             if (!primeroUsado[filaPrimero] &&
                 filaPrimero != filaSegundo &&
                 grupos[filaPrimero][0] != 0) {
@@ -140,9 +151,11 @@ bool Fixture::organizarR16DesdeGrupos(
 
     // 3) Los segundos restantes se enfrentan entre sí.
     while (libre < 32) {
+        ContadorRecursos::registrarIteracion();
         short int filaSegundo1 = -1;
 
         for (short int fila = 0; fila < 12; fila++) {
+            ContadorRecursos::registrarIteracion();
             if (!esPeorSegundo[fila] &&
                 !segundoUsado[fila] &&
                 grupos[fila][1] != 0) {
@@ -160,6 +173,7 @@ bool Fixture::organizarR16DesdeGrupos(
         short int filaSegundo2 = -1;
 
         for (short int fila = 0; fila < 12; fila++) {
+            ContadorRecursos::registrarIteracion();
             if (!esPeorSegundo[fila] &&
                 !segundoUsado[fila] &&
                 fila != filaSegundo1 &&
@@ -331,6 +345,7 @@ int Fixture::contarEquiposPorConfederacion(const char* nombreConfederacion) cons
     int contador = 0;
 
     for (int i = 0; i < cantidadActual; i++) {
+        ContadorRecursos::registrarIteracion();
         if (faseFixture[i] != 0) {
             if (strcmp(faseFixture[i]->getConfederacion(), nombreConfederacion) == 0) {
                 contador++;
@@ -349,10 +364,12 @@ const char* Fixture::obtenerConfederacionDominante(bool& hayEmpate, int& cantida
     int conteo[TOTAL_CONFEDERACIONES];
 
     for (int i = 0; i < TOTAL_CONFEDERACIONES; i++) {
+        ContadorRecursos::registrarIteracion();
         conteo[i] = 0;
     }
 
     for (int i = 0; i < cantidadActual; i++) {
+        ContadorRecursos::registrarIteracion();
         if (faseFixture[i] != 0) {
             short int indice = convertirConfederacionAIndice(faseFixture[i]->getConfederacion());
 
@@ -365,6 +382,7 @@ const char* Fixture::obtenerConfederacionDominante(bool& hayEmpate, int& cantida
     short int dominante = -1;
 
     for (short int i = 0; i < TOTAL_CONFEDERACIONES; i++) {
+        ContadorRecursos::registrarIteracion();
         if (conteo[i] > cantidadMaxima) {
             cantidadMaxima = conteo[i];
             dominante = i;

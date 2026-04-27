@@ -4,6 +4,7 @@
 #include <string>
 #include <cstring>
 #include <sstream>
+#include "ModContadorRecursos.h"
 using namespace std;
 
 Equipo* cargarEstadisticasSelecciones(unsigned short& contRef, unsigned short& refIndAnf) {
@@ -30,8 +31,10 @@ Equipo* cargarEstadisticasSelecciones(unsigned short& contRef, unsigned short& r
     linea.reserve(120);
     stringstream ss;
 
-    while(getline(archivoSelecciones,linea))
+    while(getline(archivoSelecciones,linea)) {
+        ContadorRecursos::registrarIteracion();
         contRef++;
+    }
 
     archivoSelecciones.clear();
     archivoSelecciones.seekg(0, ios::beg);
@@ -40,10 +43,13 @@ Equipo* cargarEstadisticasSelecciones(unsigned short& contRef, unsigned short& r
     getline(archivoSelecciones, lineaDescarte);
 
     Equipo* selecciones = new Equipo [contRef];
+    ContadorRecursos::reservarMemoria(selecciones, contRef);
 
     for (unsigned short i = 0; i < contRef; i++) {
+        ContadorRecursos::registrarIteracion();
         if (!getline(archivoSelecciones, linea)){
             cout<<"error en la lectura de una linea: "<<i<<endl;
+            ContadorRecursos::liberarMemoria(selecciones, contRef);
             delete [] selecciones;
             selecciones = nullptr;
             break;
@@ -100,6 +106,7 @@ void actualizarEstadisticasSelecciones(Equipo* selecciones, unsigned short& cont
                           "Goles en contra;Partidos ganados;Partidos empatados;"
                           "Partidos perdidos\n";
     for (unsigned short i = 0; i < contRef; i++) {
+        ContadorRecursos::registrarIteracion();
         if (selecciones == nullptr) {
             cout << "selecciones es nullptr\n";
         }
@@ -144,6 +151,7 @@ void cargarEstadisticasJugadores(Equipo* selecciones, unsigned short& contRef) {
     stringstream ss;
 
     while (getline(archivoJugadores, linea)) {
+        ContadorRecursos::registrarIteracion();
         ss.str(linea);
         ss.clear();
 
@@ -174,6 +182,7 @@ void cargarEstadisticasJugadores(Equipo* selecciones, unsigned short& contRef) {
         }
 
         for (unsigned short i = 0; i < contRef; i++) {
+            ContadorRecursos::registrarIteracion();
             if ((string)pais == (string)selecciones[i].getPais()) {
                 Jugador* jugador = new Jugador(camiseta,
                                                goles,
@@ -181,6 +190,7 @@ void cargarEstadisticasJugadores(Equipo* selecciones, unsigned short& contRef) {
                                                amarillas,
                                                rojas,
                                                faltas);
+                ContadorRecursos::reservarMemoria(jugador, 1);
 
                 selecciones[i].setConvocado(camiseta - 1, jugador);
                 break;
@@ -200,7 +210,9 @@ void actualizarEstadisticasJugadores(Equipo* selecciones, unsigned short& contRe
     archivoJugadores << "Pais;Camiseta;Goles;Minutos;Tarjetas Amar;Tarjetas Rojas;Faltas\n";
 
     for (unsigned short i = 0; i < contRef; i++) {
+        ContadorRecursos::registrarIteracion();
         for (unsigned short j = 0; j < 26; j++) {
+            ContadorRecursos::registrarIteracion();
             const Jugador* temp = selecciones[i].getConvocado(j);
 
             if (temp == nullptr) {

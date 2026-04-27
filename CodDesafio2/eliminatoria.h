@@ -10,7 +10,7 @@ using std::right;
 class Eliminatoria
 {
 private:
-    Equipo** grupos[12];
+
 
     void conformarBombos(short int* );
     void conformarGrupos(Equipo* ,short int* );
@@ -27,6 +27,7 @@ public:
     void simularPartidos();
     void ordenarGrupos();
     void imprimirTablaDeClasificacion();
+    Equipo** grupos[12];
 };
 
 #endif // ELIMINATORIA_H
