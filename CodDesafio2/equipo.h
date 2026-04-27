@@ -17,16 +17,18 @@ private:
     char dt[20];
     char federacion[47];
     char confederacion[10];
-    unsigned short golesAFavor;
+    unsigned short golesAFavorActual;
+    unsigned short golesAFavorHist;
     unsigned short golesEnContra;
     unsigned short partidosGanados;
     unsigned short partidosEmpatados;
     unsigned short partidosPerdidos;
+    short int prioridadSorteo;
     Jugador* convocados[26];
 public:
     Equipo(unsigned short = 0, const char * const = "", const char * const = "", const char * const = "",
            const char * const = "", unsigned short = 0,unsigned short = 0, unsigned short = 0, unsigned short = 0,
-           unsigned short = 0);
+           unsigned short = 0,unsigned short = 0);
 
     const Equipo &operator=(const Equipo &);
     void elegirTitulares();
@@ -41,8 +43,6 @@ public:
     //void setFederacion();
     const char* getConfederacion() const;
     //void setConfederacion();
-    unsigned short getGolesAFavor() const;
-    void setGolesAFavor(unsigned short newGolesAFavor);
     unsigned short getGolesEnContra() const;
     void setGolesEnContra(unsigned short newGolesEnContra);
     unsigned short getPartidosGanados() const;
@@ -53,6 +53,12 @@ public:
     void setPartidosPerdidos(unsigned short newPartidosPerdidos);
     Jugador* getConvocado(unsigned int i); //modificacion
     const Jugador* getConvocado(unsigned int i) const;  //solo lectura
+    short getPrioridadSorteo() const;
+    void setPrioridadSorteo(short newPrioridadSorteo);
+    unsigned short getGolesAFavorActual() const;
+    void setGolesAFavorActual(unsigned short newGolesAFavorActual);
+    unsigned short getGolesAFavorHist() const;
+    void setGolesAFavorHist(unsigned short newGolesAFavorHist);
 };
 
 #endif // EQUIPO_H

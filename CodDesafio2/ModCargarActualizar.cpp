@@ -40,6 +40,7 @@ Equipo* cargarEstadisticasSelecciones(unsigned short& contRef, unsigned short& r
     getline(archivoSelecciones, lineaDescarte);
 
     Equipo* selecciones = new Equipo [contRef];
+
     for (unsigned short i = 0; i < contRef; i++) {
         if (!getline(archivoSelecciones, linea)){
             cout<<"error en la lectura de una linea: "<<i<<endl;
@@ -80,7 +81,7 @@ Equipo* cargarEstadisticasSelecciones(unsigned short& contRef, unsigned short& r
         getline(ss, temp);
         partidosPerdidos = (unsigned short)stoi(temp);
 
-        selecciones[i] = Equipo(ranking, pais, dt, federacion, confederacion,
+        selecciones[i] = Equipo(ranking, pais, dt, federacion, confederacion,0,
                                 golesAFavor, golesEnContra, partidosGanados,
                                 partidosEmpatados, partidosPerdidos);
         if((string)pais == "United States") refIndAnf = i;
@@ -111,7 +112,7 @@ void actualizarEstadisticasSelecciones(Equipo* selecciones, unsigned short& cont
             << (string)temp.getDt()               << ';'
             << (string)temp.getFederacion()       << ';'
             << (string)temp.getConfederacion()    << ';'
-            << temp.getGolesAFavor()      << ';'
+            << temp.getGolesAFavorHist()      << ';'
             << temp.getGolesEnContra()    << ';'
             << temp.getPartidosGanados()  << ';'
             << temp.getPartidosEmpatados()<< ';'

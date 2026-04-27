@@ -21,6 +21,9 @@ int main()
     faseDeGrupos.imprimirGruposConformados();
     faseDeGrupos.ordenarGrupos();
     faseDeGrupos.imprimirGruposConformados();
+
+    faseDeGrupos.simularPartidos();
+    faseDeGrupos.imprimirTablaDeClasificacion();
     actualizarEstadisticasSelecciones(selecciones, cont);
     delete[] selecciones;
     selecciones = nullptr;

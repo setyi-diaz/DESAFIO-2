@@ -115,26 +115,22 @@ bool Eliminatoria::validarConfederacion(Equipo* ptrSelecciones, short int* ptrBo
 }
 void Eliminatoria::imprimirGruposConformados(){
     for (short i = 0; i<12; i++){
-        std::cout<<"Grupo: "<<i<<std::endl;
+        cout<<"Grupo: "<<i<<endl;
         for (short j = 0; j<4; j++){
-            std::cout<<"Seleccion: "<<(string)(grupos[i][j]->getPais())
-                      <<"  confederacion: "<<(string)(grupos[i][j]->getConfederacion())<<std::endl;
+            cout<<"Seleccion: "<<(string)(grupos[i][j]->getPais())
+                      <<"  confederacion: "<<(string)(grupos[i][j]->getConfederacion())<<endl;
         }
     }
 }
 void Eliminatoria::simularPartidos(){
-    for(unsigned short i = 0; i < 4; i++){
-        for(unsigned short j = i + 1; j < 4; j++){
-            for(unsigned short k = 0; k < 3; k++){
-                if(k == 0){
-                    // partidoUno(grupos[0][i],grupos[0][j]).simularPartido();
-                    // partidoDos(grupos[1][i],grupos[1][j]).simularPartido();
-                    // partidoTres(grupos[2][i],grupos[2][j]).simularPartido();
-                    // partidoCuatro(grupos[3][i],grupos[3][j]).simularPartido();
-                }
-                else if (k == 1){
-
-                }
+    for(unsigned short g = 0; g < 12; g++){
+        for(unsigned short i = 0; i < 4; i++){
+            for(unsigned short j = i + 1; j < 4; j++){
+                Partido jogo;
+                cout<<"paso Partido jogo\n";
+                jogo.simularPartido(grupos[g][i], grupos[g][j]);
+                cout<<"paso simularPartido\n";
+                jogo.imprimirEstadisticasDelPartido();
             }
         }
     }
@@ -153,12 +149,21 @@ void Eliminatoria::ordenarSubArreglo(unsigned short inferior, unsigned short sup
         combinar(inferior, medio1, medio2, superior,ptr);
     }
 }
-bool Eliminatoria::esMayorOIgual(Equipo* a, Equipo* b) {
-    if (a->getPartidosGanados() != b->getPartidosGanados())
-        return a->getPartidosGanados() > b->getPartidosGanados();
-    if (a->getPartidosEmpatados() != b->getPartidosEmpatados())
-        return a->getPartidosEmpatados() > b->getPartidosEmpatados();
-    return a->getGolesAFavor() >= b->getGolesAFavor();
+bool Eliminatoria::criterioDeDesempate(Equipo* a, Equipo* b) {
+    unsigned short puntosA = (a->getPartidosGanados() * 3) + a->getPartidosEmpatados();
+    unsigned short puntosB = (b->getPartidosGanados() * 3) + b->getPartidosEmpatados();
+    if (puntosA != puntosB)
+        return puntosA > puntosB;
+
+    short difA = a->getGolesAFavorActual() - a->getGolesEnContra();
+    short difB = b->getGolesAFavorActual() - b->getGolesEnContra();
+    if (difA != difB)
+        return difA > difB;
+
+    if (a->getGolesAFavorActual() != b->getGolesAFavorActual())
+        return a->getGolesAFavorActual() > b->getGolesAFavorActual();
+
+    return a->getPrioridadSorteo() > b->getPrioridadSorteo();
 }
 void Eliminatoria::combinar(unsigned short izquirdo, unsigned short medio1, unsigned short medio2, unsigned short derecho,Equipo** ptr){
     unsigned short indiceIzq = izquirdo;
@@ -168,7 +173,7 @@ void Eliminatoria::combinar(unsigned short izquirdo, unsigned short medio1, unsi
     Equipo** temp = new Equipo*[size];
 
     while( indiceIzq <= medio1 && indiceDer <= derecho){
-        if (esMayorOIgual(ptr[indiceIzq],ptr[indiceDer]))
+        if (criterioDeDesempate(ptr[indiceIzq],ptr[indiceDer]))
             temp[indiceCombinado++] = ptr[indiceIzq++];
         else
             temp[indiceCombinado++] = ptr[indiceDer++];
@@ -185,11 +190,67 @@ void Eliminatoria::combinar(unsigned short izquirdo, unsigned short medio1, unsi
     delete[] temp;
 }
 void Eliminatoria::ordenarGrupos(){
-    for(unsigned short i = 0; i < 12; i++){
-        ordenar(4,grupos[i]);
+    srand(time(nullptr));
+    for (unsigned short i = 0; i < 12; i++) {
+        for (unsigned short j = 0; j < 4; j++) {
+            grupos[i][j]->setPrioridadSorteo(rand() % 1000);
+        }
+        ordenar(4, grupos[i]);
     }
 }
+void Eliminatoria::imprimirTablaDeClasificacion(){
+    short difGoles;
+    unsigned short partidosJugados;
+    unsigned short puntos;
 
+    for (short i = 0; i < 12; i++) {
+        cout << "\n||=======================================================||\n";
+        cout << "||  GRUPO " << (char)('A' + i)
+             << "                                              ||\n";
+        cout << "||=======================================================||\n";
+        cout << "|| " << left  << setw(22) << "SELECCION"
+             << right << setw(5)  << "PJ"
+             << setw(5)  << "PG"
+             << setw(5)  << "PE"
+             << setw(5)  << "PP"
+             << setw(5)  << "DG"
+             << setw(6)  << "PTS"
+             << " ||\n";
+        cout << "||=======================================================||\n";
+
+        // Filas de equipos
+        for (short j = 0; j < 4; j++) {
+            partidosJugados = grupos[i][j]->getPartidosGanados()
+            + grupos[i][j]->getPartidosEmpatados()
+                + grupos[i][j]->getPartidosPerdidos();
+
+            difGoles = grupos[i][j]->getGolesAFavorActual()
+                       - grupos[i][j]->getGolesEnContra();
+
+            puntos = (grupos[i][j]->getPartidosGanados() * 3)
+                     +  grupos[i][j]->getPartidosEmpatados();
+
+            string posicion;
+            switch(j) {
+            case 0: posicion = "1."; break;
+            case 1: posicion = "2."; break;
+            case 2: posicion = "3."; break;
+            case 3: posicion = "4."; break;
+            }
+
+            cout << "|| " << left  << setw(3)  << posicion
+                 << left  << setw(19) << (string)grupos[i][j]->getPais()
+                 << right << setw(5)  << partidosJugados
+                 << setw(5)  << grupos[i][j]->getPartidosGanados()
+                 << setw(5)  << grupos[i][j]->getPartidosEmpatados()
+                 << setw(5)  << grupos[i][j]->getPartidosPerdidos()
+                 << setw(5)  << difGoles
+                 << setw(6)  << puntos
+                 << " ||\n";
+        }
+        cout << "||=======================================================||\n";
+    }
+}
 
 
 

@@ -18,6 +18,7 @@ private:
     short int faltasEq1[11];
     short int faltasEq2[11];
     double posesion;
+    static std::mt19937 gen;
 
     void calcularGoles();
     void calcularPosesion();
@@ -29,7 +30,7 @@ public:
     Partido();
     Partido(Equipo* eq1, Equipo* eq2,short int gEq1, short int gEq2,short int amEq1[11], short int amEq2[11],short int fEq1[11],
             short int fEq2[11],double pos);
-    void simularPartido();
+    void simularPartido(Equipo* ,Equipo*);
     void imprimirEstadisticasDelPartido();
 };
 

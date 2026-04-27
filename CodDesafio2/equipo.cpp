@@ -1,7 +1,7 @@
 #include "equipo.h"
 
-Equipo::Equipo(unsigned short r, const  char* const p, const char* const d, const char* const f, const char* const c, unsigned short gf,
-               unsigned short gc, unsigned short pg, unsigned short pe, unsigned short pp) {
+Equipo::Equipo(unsigned short r, const  char* const p, const char* const d, const char* const f, const char* const c, unsigned short gfA,
+               unsigned short gfH,unsigned short gc, unsigned short pg, unsigned short pe, unsigned short pp) {
 
     ranking = r;
     unsigned short len = strlen(p);
@@ -24,7 +24,8 @@ Equipo::Equipo(unsigned short r, const  char* const p, const char* const d, cons
     strncpy(confederacion, c, len);
     confederacion[len] = '\0';
 
-    golesAFavor = gf;
+    golesAFavorActual = gfA;
+    golesAFavorHist = gfH;
     golesEnContra = gc;
     partidosGanados = pg;
     partidosEmpatados = pe;
@@ -41,7 +42,8 @@ const Equipo& Equipo::operator=(const Equipo &derecha){
         federacion[sizeof(federacion) - 1] = '\0';
         strncpy(confederacion, derecha.getConfederacion(), sizeof(confederacion) - 1);
         confederacion[sizeof(confederacion) - 1] = '\0';
-        golesAFavor = derecha.getGolesAFavor();
+        golesAFavorActual = derecha.getGolesAFavorActual();
+        golesAFavorHist = derecha.getGolesAFavorHist();
         golesEnContra = derecha.getGolesEnContra();
         partidosGanados = derecha.getPartidosGanados();
         partidosEmpatados = derecha.getPartidosEmpatados();
@@ -61,6 +63,20 @@ void Equipo::elegirTitulares(){
         convocados[i] = convocados[j];
         convocados[j] = temp;
     }
+}
+unsigned short Equipo::getGolesAFavorActual() const{
+    return golesAFavorActual;
+}
+void Equipo::setGolesAFavorActual(unsigned short newGolesAFavorActual){
+    golesAFavorActual += newGolesAFavorActual;
+}
+
+unsigned short Equipo::getGolesAFavorHist() const{
+    return golesAFavorHist;
+}
+
+void Equipo::setGolesAFavorHist(unsigned short newGolesAFavorHist){
+    golesAFavorHist += newGolesAFavorHist;
 }
 Jugador* Equipo::getConvocado(unsigned int i) {
     return convocados[i];
@@ -86,63 +102,51 @@ const char* Equipo::getConfederacion() const{
     return confederacion;
 }
 //void Equipo::setConfederacion(unsigned char* newConfederacion){}
-unsigned short Equipo::getGolesAFavor() const
-{
-    return golesAFavor;
-}
 
-void Equipo::setGolesAFavor(unsigned short newGolesAFavor)
-{
-    golesAFavor = newGolesAFavor;
-}
 
-unsigned short Equipo::getGolesEnContra() const
-{
+unsigned short Equipo::getGolesEnContra() const{
     return golesEnContra;
 }
 
-void Equipo::setGolesEnContra(unsigned short newGolesEnContra)
-{
-    golesEnContra = newGolesEnContra;
+void Equipo::setGolesEnContra(unsigned short newGolesEnContra){
+    golesEnContra += newGolesEnContra;
 }
 
-unsigned short Equipo::getPartidosGanados() const
-{
+unsigned short Equipo::getPartidosGanados() const{
     return partidosGanados;
 }
 
-void Equipo::setPartidosGanados(unsigned short newPartidosGanados)
-{
-    partidosGanados = newPartidosGanados;
+void Equipo::setPartidosGanados(unsigned short newPartidosGanados){
+    partidosGanados += newPartidosGanados;
 }
 
-unsigned short Equipo::getPartidosEmpatados() const
-{
+unsigned short Equipo::getPartidosEmpatados() const{
     return partidosEmpatados;
 }
 
-void Equipo::setPartidosEmpatados(unsigned short newPartidosEmpatados)
-{
-    partidosEmpatados = newPartidosEmpatados;
+void Equipo::setPartidosEmpatados(unsigned short newPartidosEmpatados){
+    partidosEmpatados += newPartidosEmpatados;
 }
 
-unsigned short Equipo::getPartidosPerdidos() const
-{
+unsigned short Equipo::getPartidosPerdidos() const{
     return partidosPerdidos;
 }
 
-void Equipo::setPartidosPerdidos(unsigned short newPartidosPerdidos)
-{
-    partidosPerdidos = newPartidosPerdidos;
+void Equipo::setPartidosPerdidos(unsigned short newPartidosPerdidos){
+    partidosPerdidos += newPartidosPerdidos;
 }
 
-unsigned short Equipo::getRanking() const
-{
+unsigned short Equipo::getRanking() const{
     return ranking;
 }
 
-void Equipo::setRanking(unsigned short newRanking)
-{
+void Equipo::setRanking(unsigned short newRanking){
     ranking = newRanking;
 }
+short Equipo::getPrioridadSorteo() const{
+    return prioridadSorteo;
+}
 
+void Equipo::setPrioridadSorteo(short newPrioridadSorteo){
+    prioridadSorteo = newPrioridadSorteo;
+}
